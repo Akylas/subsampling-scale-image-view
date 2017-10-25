@@ -178,7 +178,7 @@ public class SubsamplingScaleImageView extends View {
     private int doubleTapZoomStyle = ZOOM_FOCUS_FIXED;
 
     // Current scale and scale at start of zoom
-    private float scale;
+    private float scale = -1;
     private float scaleStart;
 
     // Screen coordinate of top-left corner of source image
@@ -239,6 +239,9 @@ public class SubsamplingScaleImageView extends View {
 
     // Long click listener
     private OnLongClickListener onLongClickListener;
+    
+    // Long click listener
+    private OnScaleChangeListener onScaleChangeListener;
 
     // Long click handler
     private Handler handler;
@@ -660,8 +663,13 @@ public class SubsamplingScaleImageView extends View {
                             isZooming = true;
                             isPanning = true;
                             consumed = true;
-
-                            scale = Math.min(maxScale, (vDistEnd / vDistStart) * scaleStart);
+                            float newScale = Math.min(maxScale, (vDistEnd / vDistStart) * scaleStart);
+                            if (scale != newScale) {
+                                scale = newScale;
+                                if (onScaleChangeListener != null) {
+                                    onScaleChangeListener.onScaleChange(scale, false, true);
+                                }
+                            }
 
                             if (scale <= minScale()) {
                                 // Minimum scale reached so don't pan. Adjust start settings so any expand will zoom in.
@@ -710,8 +718,13 @@ public class SubsamplingScaleImageView extends View {
                                 multiplier = isUpwards ? (1 + spanDiff) : (1 - spanDiff);
                             }
 
-                            scale = Math.max(minScale(), Math.min(maxScale, scale * multiplier));
-
+                            float newScale = Math.max(minScale(), Math.min(maxScale, scale * multiplier));
+                            if (scale != newScale) {
+                                scale = newScale;
+                                if (onScaleChangeListener != null) {
+                                    onScaleChangeListener.onScaleChange(scale, false, true);
+                                }
+                            }
                             if (panEnabled) {
                                 float vLeftStart = vCenterStart.x - vTranslateStart.x;
                                 float vTopStart = vCenterStart.y - vTranslateStart.y;
@@ -781,6 +794,12 @@ public class SubsamplingScaleImageView extends View {
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_POINTER_2_UP:
                 handler.removeMessages(MESSAGE_LONG_CLICK);
+                if (isQuickScaling || isZooming) {
+                  //we fire one more onScaleChange with userInteraction false
+                    if (onScaleChangeListener != null) {
+                        onScaleChangeListener.onScaleChange(scale, false, false);
+                    }
+                }
                 if (isQuickScaling) {
                     isQuickScaling = false;
                     if (!quickScaleMoved) {

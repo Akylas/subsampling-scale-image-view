@@ -419,6 +419,10 @@ public class SubsamplingScaleImageView extends View {
             }
         }
     }
+    
+    public Bitmap getCurrentBitmap() {
+        return this.bitmap;
+    }
 
     /**
      * Reset all state before setting/changing image or setting new rotation.

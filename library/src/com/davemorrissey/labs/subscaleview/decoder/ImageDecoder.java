@@ -25,4 +25,6 @@ public interface ImageDecoder {
      */
     Bitmap decode(Context context, Uri uri) throws Exception;
 
+    boolean isCached(Context context, Uri source);
+
 }

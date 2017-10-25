@@ -76,4 +76,9 @@ public class SkiaImageDecoder implements ImageDecoder {
         }
         return bitmap;
     }
+
+    @Override
+    public boolean isCached(Context context, Uri source) {
+        return false;
+    }
 }

@@ -1588,6 +1588,7 @@ public class SubsamplingScaleImageView extends View {
         private final Uri source;
         private final boolean preview;
         private Bitmap bitmap;
+        private boolean cached = false;
         private Exception exception;
 
         public BitmapLoadTask(SubsamplingScaleImageView view, Context context, DecoderFactory<? extends ImageDecoder> decoderFactory, Uri source, boolean preview) {
@@ -1606,7 +1607,9 @@ public class SubsamplingScaleImageView extends View {
                 DecoderFactory<? extends ImageDecoder> decoderFactory = decoderFactoryRef.get();
                 SubsamplingScaleImageView subsamplingScaleImageView = viewRef.get();
                 if (context != null && decoderFactory != null && subsamplingScaleImageView != null) {
-                    bitmap = decoderFactory.make().decode(context, source);
+                    ImageDecoder decode = decoderFactory.make();
+                    bitmap = decode.decode(context, source);
+                    cached = decode.isCached(context, source);
                     return subsamplingScaleImageView.getExifOrientation(sourceUri);
                 }
             } catch (Exception e) {
@@ -1624,7 +1627,7 @@ public class SubsamplingScaleImageView extends View {
                     if (preview) {
                         subsamplingScaleImageView.onPreviewLoaded(bitmap);
                     } else {
-                        subsamplingScaleImageView.onImageLoaded(bitmap, orientation, false);
+                        subsamplingScaleImageView.onImageLoaded(bitmap, orientation, cached);
                     }
                 } else if (exception != null && subsamplingScaleImageView.onImageEventListener != null) {
                     if (preview) {

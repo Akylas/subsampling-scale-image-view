@@ -2184,6 +2184,10 @@ public class SubsamplingScaleImageView extends View {
             invalidate();
         }
     }
+    
+    public final int getMinimumScaleType() {
+        return this.minimumScaleType;
+    }
 
     /**
      * Set the maximum scale allowed. A value of 1 means 1:1 pixels at maximum scale. You may wish to set this according

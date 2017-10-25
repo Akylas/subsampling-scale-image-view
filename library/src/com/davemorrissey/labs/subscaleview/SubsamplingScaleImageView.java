@@ -370,13 +370,11 @@ public class SubsamplingScaleImageView extends View {
      * @param state State to be restored. Nullable.
      */
     public final void setImage(ImageSource imageSource, ImageSource previewSource, ImageViewState state) {
-        if (imageSource == null) {
-            throw new NullPointerException("imageSource must not be null");
-        }
-
         reset(true);
         if (state != null) { restoreState(state); }
-
+        if (imageSource == null) {
+            return;
+        }
         if (previewSource != null) {
             if (imageSource.getBitmap() != null) {
                 throw new IllegalArgumentException("Preview image cannot be used when a bitmap is provided for the main image");

@@ -3031,6 +3031,7 @@ public class SubsamplingScaleImageView extends View {
         * Called when the scale changed.
         */
        void onScaleChange(final float scale, final boolean animating, final boolean userInteraction);
+   }
 
     /**
      * An event listener, allowing activities to be notified of pan and zoom events. Initialisation

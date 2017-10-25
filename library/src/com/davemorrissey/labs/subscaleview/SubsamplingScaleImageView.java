@@ -925,6 +925,12 @@ public class SubsamplingScaleImageView extends View {
                 }
                 anim = null;
             }
+            if (scale != newScale) {
+                scale = newScale;
+                if (onScaleChangeListener != null) {
+                    onScaleChangeListener.onScaleChange(scale, !finished, false);
+                }
+            }
             invalidate();
         }
 
@@ -1224,7 +1230,13 @@ public class SubsamplingScaleImageView extends View {
 
         // If waiting to translate to new center position, set translate now
         if (sPendingCenter != null && pendingScale != null) {
-            scale = pendingScale;
+            if (scale != pendingScale) {
+                scale = pendingScale;
+                if (onScaleChangeListener != null) {
+                    onScaleChangeListener.onScaleChange(scale, false, false);
+                }
+            }
+            
             if (vTranslate == null) {
                 vTranslate = new PointF();
             }
@@ -1348,7 +1360,12 @@ public class SubsamplingScaleImageView extends View {
         satTemp.scale = scale;
         satTemp.vTranslate.set(vTranslate);
         fitToBounds(center, satTemp);
-        scale = satTemp.scale;
+        if (scale != satTemp.scale) {
+            scale = satTemp.scale;
+            if (onScaleChangeListener != null) {
+                onScaleChangeListener.onScaleChange(scale, false, false);
+            }
+        }
         vTranslate.set(satTemp.vTranslate);
         if (init) {
             vTranslate.set(vTranslateForSCenter(sWidth()/2, sHeight()/2, scale));

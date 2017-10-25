@@ -1022,6 +1022,7 @@ public class SubsamplingScaleImageView extends View {
 
             // Optimum sample size for current scale
             int sampleSize = Math.min(fullImageSampleSize, calculateInSampleSize(scale));
+            final int orientation = getRequiredRotation();
 
             // First check for missing tiles - if there are any we need the base layer underneath to avoid gaps
             boolean hasMissingTiles = false;
@@ -1047,13 +1048,13 @@ public class SubsamplingScaleImageView extends View {
                             if (matrix == null) { matrix = new Matrix(); }
                             matrix.reset();
                             setMatrixArray(srcArray, 0, 0, tile.bitmap.getWidth(), 0, tile.bitmap.getWidth(), tile.bitmap.getHeight(), 0, tile.bitmap.getHeight());
-                            if (getRequiredRotation() == ORIENTATION_0) {
+                            if (orientation == ORIENTATION_0) {
                                 setMatrixArray(dstArray, tile.vRect.left, tile.vRect.top, tile.vRect.right, tile.vRect.top, tile.vRect.right, tile.vRect.bottom, tile.vRect.left, tile.vRect.bottom);
-                            } else if (getRequiredRotation() == ORIENTATION_90) {
+                            } else if (orientation == ORIENTATION_90) {
                                 setMatrixArray(dstArray, tile.vRect.right, tile.vRect.top, tile.vRect.right, tile.vRect.bottom, tile.vRect.left, tile.vRect.bottom, tile.vRect.left, tile.vRect.top);
-                            } else if (getRequiredRotation() == ORIENTATION_180) {
+                            } else if (orientation == ORIENTATION_180) {
                                 setMatrixArray(dstArray, tile.vRect.right, tile.vRect.bottom, tile.vRect.left, tile.vRect.bottom, tile.vRect.left, tile.vRect.top, tile.vRect.right, tile.vRect.top);
-                            } else if (getRequiredRotation() == ORIENTATION_270) {
+                            } else if (orientation == ORIENTATION_270) {
                                 setMatrixArray(dstArray, tile.vRect.left, tile.vRect.bottom, tile.vRect.left, tile.vRect.top, tile.vRect.right, tile.vRect.top, tile.vRect.right, tile.vRect.bottom);
                             }
                             matrix.setPolyToPoly(srcArray, 0, dstArray, 0, 4);
@@ -1074,6 +1075,7 @@ public class SubsamplingScaleImageView extends View {
         } else if (bitmap != null) {
 
             float xScale = scale, yScale = scale;
+            final int orientation = getRequiredRotation();
             if (bitmapIsPreview) {
                 xScale = scale * ((float)sWidth/bitmap.getWidth());
                 yScale = scale * ((float)sHeight/bitmap.getHeight());
@@ -1082,14 +1084,14 @@ public class SubsamplingScaleImageView extends View {
             if (matrix == null) { matrix = new Matrix(); }
             matrix.reset();
             matrix.postScale(xScale, yScale);
-            matrix.postRotate(getRequiredRotation());
+            matrix.postRotate(orientation);
             matrix.postTranslate(vTranslate.x, vTranslate.y);
 
-            if (getRequiredRotation() == ORIENTATION_180) {
+            if (orientation == ORIENTATION_180) {
                 matrix.postTranslate(scale * sWidth, scale * sHeight);
-            } else if (getRequiredRotation() == ORIENTATION_90) {
+            } else if (orientation == ORIENTATION_90) {
                 matrix.postTranslate(scale * sHeight, 0);
-            } else if (getRequiredRotation() == ORIENTATION_270) {
+            } else if (orientation == ORIENTATION_270) {
                 matrix.postTranslate(0, scale * sWidth);
             }
 

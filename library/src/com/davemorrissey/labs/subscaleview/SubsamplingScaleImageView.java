@@ -2513,6 +2513,13 @@ public class SubsamplingScaleImageView extends View {
     public void setOnImageEventListener(OnImageEventListener onImageEventListener) {
         this.onImageEventListener = onImageEventListener;
     }
+    
+    /**
+     * Add a listener allowing notification of scale change.
+     */
+    public void setOnScaleChangeListener(OnScaleChangeListener listener) {
+        this.onScaleChangeListener = listener;
+    }
 
     /**
      * Creates a panning animation builder, that when started will animate the image to place the given coordinates of
@@ -2799,5 +2806,15 @@ public class SubsamplingScaleImageView extends View {
         @Override public void onTileLoadError(Exception e) { }
 
     }
+    
+    /* An event listener, allowing subclasses and activities to be notified of significant events.
+    */
+   public static interface OnScaleChangeListener {
 
+       /**
+        * Called when the scale changed.
+        */
+       void onScaleChange(final float scale, final boolean animating, final boolean userInteraction);
+
+   }
 }
